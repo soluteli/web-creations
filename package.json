@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@antv/g": "^5.18.24",
+    "@antv/g-canvas": "^1.11.26",
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",
     "next": "14.0.4",

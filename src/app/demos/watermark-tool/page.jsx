@@ -1,11 +1,17 @@
 'use client'
 import { useRef } from "react";
-import { Canvas, Image as GImage } from '@antv/g';
+import { Canvas, Image as GImage, Text, Group } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
+import { ImageExporter } from '@antv/g-image-exporter';
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 
 export default function Watermark() {
 
   const domRef = useRef(null)
+  const canvasRef = useRef(null)
 
   const getImageMetaData = (file) => {
     return new Promise(resolve => {
@@ -25,6 +31,67 @@ export default function Watermark() {
     })
       
     });
+  }
+
+  const generateWatermarks = (width, height) => {
+    const text = new Text({
+      style: {
+          text: 'abcde',
+          color: 'rgba(0,0,0,0.8)',
+      },
+    });
+
+    const textAttr = {
+      fontSize: '16px',
+      fontFamily: 'sans-serif',
+      fontWeight: 'normal',
+      fontVariant: 'normal',
+      fontStyle: 'normal',
+      textAlign: 'start',
+      textBaseline: 'alphabetic',
+      lineWidth: 0,
+  }
+    
+    text.attr(textAttr);
+    const boundSize = text.getLineBoundingRects();
+    console.log('boundSize', boundSize)
+
+    const watermarkGroup = new Group()
+    const {width: sizeX, height: sizeY} = boundSize[0]
+
+    const gapX = sizeX
+    const gapY = sizeY * 2
+
+    for (let x = width * -0.5 ; x < 1.5 * width; x+=(sizeX +gapX)) {
+      console.log('x', x)
+      for (let y = -1 * height; y < 3 * height; y+=(sizeY+gapY)) {
+        const text = new Text({
+          style: {
+              text: 'abcde',
+              x,
+              y,
+              transformOrigin: 'center center'
+          },
+        });
+    
+        const textAttr = {
+          fontSize: '16px',
+          fontFamily: 'sans-serif',
+          fontWeight: 'normal',
+          fontVariant: 'normal',
+          fontStyle: 'normal',
+          textAlign: 'start',
+          textBaseline: 'alphabetic',
+          lineWidth: 0,
+      }
+        
+        text.attr(textAttr);
+        watermarkGroup.appendChild(text)
+
+      }
+    }
+    
+    return watermarkGroup
   }
 
   const startDraw = async (file) => {
@@ -66,6 +133,13 @@ export default function Watermark() {
 
 
     canvas.appendChild(image)
+
+
+    const watermarkGroup = generateWatermarks(containerWidth, containerHeight)
+    watermarkGroup.rotate(-30)
+    canvas.appendChild(watermarkGroup)
+
+    canvasRef.current = canvas
   }
 
   const handleSelectFile = async (event) => {
@@ -73,12 +147,29 @@ export default function Watermark() {
     startDraw(event.target.files[0])
   }
 
+  const handleDownload = async () => {
+    const exporter = new ImageExporter({
+      canvas: canvasRef.current, // 传入画布
+      defaultFilename: 'my-default-filename',
+    });
+    const _canvas = await exporter.toCanvas({})
+    const dataURL = _canvas.toDataURL();
+    exporter.downloadImage({
+      dataURL,
+      name: 'test',
+    });
+  }
+
   return (
     <>
       <div>Watermark</div>
-      <div>
-        <input type="file" accept="image/*" onChange={handleSelectFile} className="file-input w-full max-w-xs" />
+      
+      <div className="grid w-full max-w-sm items-center gap-1.5">
+        <Label htmlFor="picture">上传图片</Label>
+        <Input id="picture" type="file" accept="image/*" onChange={handleSelectFile} />
       </div>
+        
+        <Button variant="primary" onClick={handleDownload}>DownLoad</Button>
       <div className="w-[80vh] min-h-[80vh]">
         <div ref={domRef} className="size-full">
         </div>

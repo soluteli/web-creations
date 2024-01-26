@@ -1,0 +1,2 @@
+## Problems
+1. [oklch](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch) was not supported in @antv/g-image-exporter / https://github.com/niklasvh/html2canvas  -- https://github.com/niklasvh/html2canvas/issues/3130

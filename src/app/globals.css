@@ -56,5 +56,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    @apply text-gray-700 dark:text-gray-200;
   }
 }

@@ -1,2 +1,12 @@
+## Resources
+icons:
+1. https://www.radix-ui.com/icons
+2. https://icon-sets.iconify.design/ri/
+
+
 ## Problems
 1. [oklch](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch) was not supported in @antv/g-image-exporter / https://github.com/niklasvh/html2canvas  -- https://github.com/niklasvh/html2canvas/issues/3130
+
+
+## To Learn
+1. `import { Inter } from 'next/font/google'`
